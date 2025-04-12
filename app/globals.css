@@ -92,3 +92,19 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes starfield {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -10000px 5000px;
+  }
+}
+
+.animate-starfield {
+  background-image: radial-gradient(white 1px, transparent 1px);
+  background-size: 3px 3px;
+  animation: starfield 120s linear infinite;
+}
+
