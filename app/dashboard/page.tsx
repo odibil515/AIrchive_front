@@ -1,15 +1,17 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import DashboardLayout from "@/components/dashboard-layout"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Bot, Send, User } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import DashboardLayout from "@/components/dashboard-layout";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Bot, Send, User } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { v5 as uuidv5 } from 'uuid';
+import { useAccount } from "wagmi"; // Import useAccount hook
 
 interface Message {
   id: string
@@ -30,6 +32,8 @@ export default function DashboardPage() {
   ])
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const { address, isConnected } = useAccount(); // Get wallet address and connection status
+  const NAMESPACE = '1b671a64-40d5-491e-99b0-da01ff1f3341'; // 고정된 네임스페이스 UUID
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -39,10 +43,20 @@ export default function DashboardPage() {
     scrollToBottom()
   }, [messages])
 
+  const generateUUID = (walletAddress: string): string => {
+    const uuid = uuidv5(walletAddress, NAMESPACE);
+    return uuid;
+  }
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!input.trim()) return
+
+    if (!isConnected || !address) {
+      alert("지갑을 연결해주세요.");
+      return;
+    }
 
     // Add user message
     const userMessage: Message = {
@@ -56,34 +70,37 @@ export default function DashboardPage() {
     setInput("")
     setIsLoading(true)
 
-    // Simulate AI response
-    setTimeout(() => {
-      let response = ""
+    try {
+      // API 호출
+      const userId = generateUUID(address); // 지갑 주소를 사용하여 UUID 생성
+      const response = await fetch("http://localhost:3000/aiagent/chat?userId=" + userId, { // 백엔드 API 호출
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: input }),
+      });
 
-      if (input.toLowerCase().includes("buy") || input.toLowerCase().includes("sell")) {
-        response =
-          "I've analyzed your trading strategy. Based on current market conditions, this looks promising. Would you like me to execute this strategy or refine it further?"
-      } else if (input.toLowerCase().includes("market") || input.toLowerCase().includes("trend")) {
-        response =
-          "Based on recent market data, we're seeing a consolidation pattern in most major cryptocurrencies. This might be a good time to prepare for a breakout in either direction."
-      } else if (input.toLowerCase().includes("news")) {
-        response =
-          "I've checked the latest economic news. There's been a recent announcement about interest rates that might impact crypto markets. Would you like me to factor this into your trading strategy?"
-      } else {
-        response =
-          "I understand your strategy. Would you like me to analyze current market conditions to see if this is a good time to implement it?"
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      const data = await response.text();
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: response,
+        content: data,
         timestamp: new Date(),
       }
 
       setMessages((prev) => [...prev, assistantMessage])
       setIsLoading(false)
-    }, 1500)
+    } catch (error) {
+      console.error("API 호출 오류:", error);
+      // 에러 처리
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -109,9 +126,8 @@ export default function DashboardPage() {
                         </Avatar>
                       )}
                       <div
-                        className={`rounded-lg px-4 py-2 ${
-                          message.role === "user" ? "bg-emerald-600 text-white" : "bg-gray-700 text-white"
-                        }`}
+                        className={`rounded-lg px-4 py-2 ${message.role === "user" ? "bg-emerald-600 text-white" : "bg-gray-700 text-white"
+                          }`}
                       >
                         <p>{message.content}</p>
                         <p className="text-xs opacity-70 mt-1">
