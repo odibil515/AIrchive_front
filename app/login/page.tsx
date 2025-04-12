@@ -1,59 +1,91 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useToast } from "@/components/ui/use-toast"
-import { Bot, Wallet } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/use-toast";
+import { Bot, Wallet } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useConnect, useAccount } from "wagmi";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const { toast } = useToast()
-  const router = useRouter()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+  const router = useRouter();
+  const { connect, connectors, error: connectError, isPending } = useConnect();
+  const { address, isConnected } = useAccount();
 
+  const handleWalletConnect = async () => {
+    setIsLoading(true);
+
+    try {
+      await connect({ connector: connectors[0] }); // MetaMask로 연결 시도
+
+      toast({
+        title: "Wallet connected",
+        description: `You've connected wallet: ${address}`,
+      });
+
+      router.push("/dashboard");
+    } catch (err) {
+      toast({
+        title: "Connection failed",
+        description: "MetaMask 연결에 실패했습니다. 지갑을 확인해주세요.",
+        variant: "destructive",
+      });
+    }
+
+    setIsLoading(false);
+  };
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     // For demo purposes, we'll use hardcoded credentials
     if (email === "demo@example.com" && password === "password") {
       toast({
         title: "Login successful",
         description: "Welcome back to TradingAI!",
-      })
-      router.push("/dashboard")
+      });
+      router.push("/dashboard");
     } else {
       toast({
         title: "Login failed",
         description: "Invalid credentials. Try demo@example.com / password",
         variant: "destructive",
-      })
+      });
     }
 
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
-  const handleWalletConnect = () => {
-    setIsLoading(true)
+  // const handleWalletConnect = () => {
+  //   setIsLoading(true);
 
-    // Simulate wallet connection
-    setTimeout(() => {
-      toast({
-        title: "Wallet connected",
-        description: "You've been logged in with your wallet",
-      })
-      router.push("/dashboard")
-      setIsLoading(false)
-    }, 1500)
-  }
+  //   // Simulate wallet connection
+  //   setTimeout(() => {
+  //     toast({
+  //       title: "Wallet connected",
+  //       description: "You've been logged in with your wallet",
+  //     });
+  //     router.push("/dashboard");
+  //     setIsLoading(false);
+  //   }, 1500);
+  // };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900/30 to-gray-800/30 p-4">
@@ -63,7 +95,9 @@ export default function LoginPage() {
             <Bot className="h-12 w-12 text-emerald-400" />
           </div>
           <CardTitle className="text-2xl text-white">Welcome back</CardTitle>
-          <CardDescription className="text-gray-400">Login to your TradingAI account</CardDescription>
+          <CardDescription className="text-gray-400">
+            Login to your TradingAI account
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Button
@@ -80,7 +114,9 @@ export default function LoginPage() {
               <span className="w-full border-t border-gray-700"></span>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-gray-800 px-2 text-gray-400">Or continue with</span>
+              <span className="bg-gray-800 px-2 text-gray-400">
+                Or continue with
+              </span>
             </div>
           </div>
 
@@ -105,7 +141,10 @@ export default function LoginPage() {
                   <Label htmlFor="password" className="text-gray-300">
                     Password
                   </Label>
-                  <Link href="#" className="text-sm text-emerald-400 hover:underline">
+                  <Link
+                    href="#"
+                    className="text-sm text-emerald-400 hover:underline"
+                  >
                     Forgot password?
                   </Link>
                 </div>
@@ -119,7 +158,11 @@ export default function LoginPage() {
                   className="bg-gray-700 border-gray-600 text-white"
                 />
               </div>
-              <Button type="submit" className="w-full bg-emerald-500 hover:bg-emerald-600" disabled={isLoading}>
+              <Button
+                type="submit"
+                className="w-full bg-emerald-500 hover:bg-emerald-600"
+                disabled={isLoading}
+              >
                 {isLoading ? "Logging in..." : "Login"}
               </Button>
             </div>
@@ -135,5 +178,5 @@ export default function LoginPage() {
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

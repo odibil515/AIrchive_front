@@ -1,22 +1,25 @@
-import type React from "react"
-import { ThemeProvider } from "@/components/theme-provider"
-import { Toaster } from "@/components/ui/toaster"
-import { Inter } from "next/font/google"
-import Starfield from "@/components/Starfield"
-import "./globals.css"
+import type React from "react";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+import { Inter } from "next/font/google";
+import Starfield from "@/components/Starfield";
+import "./globals.css";
+import { WagmiProvider } from "wagmi";
+import Providers from "../app/provider";
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "AI Trading Agent Platform",
-  description: "LLM-based trading agent platform for automated trading strategies",
-  generator: 'v0.dev'
-}
+  description:
+    "LLM-based trading agent platform for automated trading strategies",
+  generator: "v0.dev",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -31,11 +34,12 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <Providers>{children}</Providers>
+
             <Toaster />
           </ThemeProvider>
         </div>
       </body>
     </html>
-  )
+  );
 }
