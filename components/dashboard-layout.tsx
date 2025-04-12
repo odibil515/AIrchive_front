@@ -72,7 +72,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     {
       href: "/dashboard/marketplace",
       icon: <Store className="h-5 w-5" />,
-      label: "Marketplace",
+      label: "Subscription",
     },
     {
       href: "/dashboard/settings",
@@ -106,7 +106,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
           >
             <Bot className="h-6 w-6 text-emerald-400" />
-            <h1 className="text-xl font-bold">TradingAI</h1>
+            <h1 className="text-xl font-bold">Tradgent</h1>
           </Link>
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -127,7 +127,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     onClick={() => setOpen(false)}
                   >
                     <Bot className="h-6 w-6 text-emerald-400" />
-                    <h2 className="text-xl font-bold">TradingAI</h2>
+                    <h2 className="text-xl font-bold">Tradgent</h2>
                   </Link>
                 </div>
                 <nav className="flex-1 p-4 space-y-1">
@@ -159,7 +159,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 className="flex items-center gap-2 hover:opacity-80 transition-opacity"
               >
                 <Bot className="h-6 w-6 text-emerald-400" />
-                <h2 className="text-xl font-bold">TradingAI</h2>
+                <h2 className="text-xl font-bold">Tradgent</h2>
               </Link>
             </div>
             <nav className="flex-1 p-4 space-y-1">{renderNavItems()}</nav>

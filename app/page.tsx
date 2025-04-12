@@ -63,7 +63,7 @@ export default function Home() {
       <header className="container mx-auto py-6 px-4 flex justify-between items-center relative z-10">
         <div className="flex items-center gap-2">
           <Bot className="h-8 w-8 text-emerald-400" />
-          <h1 className="text-2xl font-bold">TradingAI</h1>
+          <h1 className="text-2xl font-bold">Tradgent</h1>
         </div>
 
         {/* 👇 연결 상태에 따라 버튼 토글 */}
@@ -147,9 +147,9 @@ export default function Home() {
           <Card className="bg-gray-800 border-gray-700 transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg">
             <CardHeader>
               <Store className="h-12 w-12 text-emerald-400 mb-2" />
-              <CardTitle>Agent Marketplace</CardTitle>
+              <CardTitle>Agent Subscription</CardTitle>
               <CardDescription className="text-gray-400">
-                Buy, sell, and share trading strategies
+                Subscribe trading strategies
               </CardDescription>
             </CardHeader>
             <CardContent>

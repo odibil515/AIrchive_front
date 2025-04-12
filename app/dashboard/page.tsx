@@ -27,7 +27,7 @@ export default function DashboardPage() {
       id: "1",
       role: "assistant",
       content:
-        "Hello! I'm your AI trading assistant. How can I help you with your trading strategy today?",
+        "Hello! I’m your AI agent here to help with your investments. If you tell me your preferred investment strategy, I’ll handle your investments accordingly. Which type of assets do you mainly invest in? Also, what kind of investor are you?",
       timestamp: new Date(),
     },
   ]);
