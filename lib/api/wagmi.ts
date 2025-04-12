@@ -1,5 +1,5 @@
 "use client";
-import { http, createConfig } from "wagmi";
+import { http, createConfig, createStorage, cookieStorage } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import { injected } from "wagmi/connectors";
 
@@ -12,8 +12,13 @@ const metaMaskConnector = injected({
 // Wagmi 설정
 export const config = createConfig({
   chains: [sepolia],
+
   connectors: [metaMaskConnector], // MetaMask 커넥터만 사용
   transports: {
     [sepolia.id]: http(),
   },
+  ssr: true,
+  storage: createStorage({
+    storage: cookieStorage, // 또는 localStorage로 변경 가능
+  }),
 });

@@ -1,20 +1,30 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useMobile } from "@/hooks/use-mobile"
-import { cn } from "@/lib/utils"
-import { BarChart3, Bot, LogOut, Menu, Newspaper, Settings, Store, User } from "lucide-react"
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import { type ReactNode, useState } from "react"
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
+import {
+  BarChart3,
+  Bot,
+  LogOut,
+  Menu,
+  Newspaper,
+  Settings,
+  Store,
+  User,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { type ReactNode, useState } from "react";
+import { useDisconnect } from "wagmi";
 
 interface NavItemProps {
-  href: string
-  icon: ReactNode
-  label: string
-  active?: boolean
-  onClick?: () => void
+  href: string;
+  icon: ReactNode;
+  label: string;
+  active?: boolean;
+  onClick?: () => void;
 }
 
 function NavItem({ href, icon, label, active, onClick }: NavItemProps) {
@@ -23,33 +33,53 @@ function NavItem({ href, icon, label, active, onClick }: NavItemProps) {
       href={href}
       className={cn(
         "flex items-center gap-3 px-3 py-2 rounded-md transition-colors",
-        active ? "bg-gray-800 text-white" : "text-gray-400 hover:text-white hover:bg-gray-800",
+        active
+          ? "bg-gray-800 text-white"
+          : "text-gray-400 hover:text-white hover:bg-gray-800"
       )}
       onClick={onClick}
     >
       {icon}
       <span>{label}</span>
     </Link>
-  )
+  );
 }
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
-  const pathname = usePathname()
-  const router = useRouter()
-  const isMobile = useMobile()
-  const [open, setOpen] = useState(false)
+  const pathname = usePathname();
+  const router = useRouter();
+  const isMobile = useMobile();
+  const [open, setOpen] = useState(false);
+  const { disconnect } = useDisconnect();
 
   const handleLogout = () => {
-    router.push("/login")
-  }
+    disconnect();
+    router.push("/");
+  };
 
   const navItems = [
     { href: "/dashboard", icon: <Bot className="h-5 w-5" />, label: "AI Chat" },
-    { href: "/dashboard/trading", icon: <BarChart3 className="h-5 w-5" />, label: "Trading" },
-    { href: "/dashboard/news", icon: <Newspaper className="h-5 w-5" />, label: "News" },
-    { href: "/dashboard/marketplace", icon: <Store className="h-5 w-5" />, label: "Marketplace" },
-    { href: "/dashboard/settings", icon: <Settings className="h-5 w-5" />, label: "Settings" },
-  ]
+    {
+      href: "/dashboard/trading",
+      icon: <BarChart3 className="h-5 w-5" />,
+      label: "Trading",
+    },
+    {
+      href: "/dashboard/news",
+      icon: <Newspaper className="h-5 w-5" />,
+      label: "News",
+    },
+    {
+      href: "/dashboard/marketplace",
+      icon: <Store className="h-5 w-5" />,
+      label: "Marketplace",
+    },
+    {
+      href: "/dashboard/settings",
+      icon: <Settings className="h-5 w-5" />,
+      label: "Settings",
+    },
+  ];
 
   const renderNavItems = (onClick?: () => void) => (
     <>
@@ -64,14 +94,17 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         />
       ))}
     </>
-  )
+  );
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Mobile Header */}
       {isMobile && (
         <header className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-gray-900 border-b border-gray-800">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <Link
+            href="/"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
             <Bot className="h-6 w-6 text-emerald-400" />
             <h1 className="text-xl font-bold">TradingAI</h1>
           </Link>
@@ -82,7 +115,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-64 p-0 bg-gray-900 border-r border-gray-800">
+            <SheetContent
+              side="left"
+              className="w-64 p-0 bg-gray-900 border-r border-gray-800"
+            >
               <div className="flex flex-col h-full">
                 <div className="p-4 border-b border-gray-800">
                   <Link
@@ -94,7 +130,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     <h2 className="text-xl font-bold">TradingAI</h2>
                   </Link>
                 </div>
-                <nav className="flex-1 p-4 space-y-1">{renderNavItems(() => setOpen(false))}</nav>
+                <nav className="flex-1 p-4 space-y-1">
+                  {renderNavItems(() => setOpen(false))}
+                </nav>
                 <div className="p-4 border-t border-gray-800">
                   <Button
                     variant="ghost"
@@ -116,7 +154,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         {!isMobile && (
           <aside className="hidden md:flex md:w-64 flex-col border-r border-gray-800 bg-gray-900">
             <div className="p-4 border-b border-gray-800">
-              <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <Link
+                href="/"
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              >
                 <Bot className="h-6 w-6 text-emerald-400" />
                 <h2 className="text-xl font-bold">TradingAI</h2>
               </Link>
@@ -126,8 +167,12 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               <div className="flex items-center gap-3 px-3 py-2 mb-2 rounded-md bg-gray-800">
                 <User className="h-5 w-5 text-emerald-400" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">Demo User</p>
-                  <p className="text-xs text-gray-400 truncate">demo@example.com</p>
+                  <p className="text-sm font-medium text-white truncate">
+                    Demo User
+                  </p>
+                  <p className="text-xs text-gray-400 truncate">
+                    demo@example.com
+                  </p>
                 </div>
               </div>
               <Button
@@ -146,5 +191,5 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <main className="flex-1 overflow-auto">{children}</main>
       </div>
     </div>
-  )
+  );
 }

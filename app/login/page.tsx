@@ -17,7 +17,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Bot, Wallet } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useConnect, useAccount } from "wagmi";
 
 export default function LoginPage() {
@@ -29,28 +29,31 @@ export default function LoginPage() {
   const { connect, connectors, error: connectError, isPending } = useConnect();
   const { address, isConnected } = useAccount();
 
-  const handleWalletConnect = async () => {
-    setIsLoading(true);
-
-    try {
-      await connect({ connector: connectors[0] }); // MetaMask로 연결 시도
-
+  useEffect(() => {
+    if (isConnected && address) {
       toast({
         title: "Wallet connected",
         description: `You've connected wallet: ${address}`,
       });
-
       router.push("/dashboard");
+    }
+  }, [isConnected, address]);
+
+  const handleWalletConnect = async () => {
+    setIsLoading(true);
+    try {
+      await connect({ connector: connectors[0] }); // 이건 지갑 연결 시도만 함
+      // 로그인 처리는 useEffect에서 처리
     } catch (err) {
       toast({
         title: "Connection failed",
-        description: "MetaMask 연결에 실패했습니다. 지갑을 확인해주세요.",
+        description: "MetaMask 연결에 실패했습니다.",
         variant: "destructive",
       });
     }
-
     setIsLoading(false);
   };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
