@@ -75,7 +75,8 @@ export default function DashboardPage() {
       // API 호출
       const userId = generateUUID(address); // 지갑 주소를 사용하여 UUID 생성
       const response = await fetch(
-        "http://localhost:3001/aiagent/chat?userId=" + userId,
+        "https://bluenode-452607.de.r.appspot.com/aiagent/chat?userId=" +
+          userId,
         {
           // 백엔드 API 호출
           method: "POST",

@@ -100,11 +100,12 @@ export default function NewsPage() {
 
   const fetchNews = async (): Promise<NewsItem[]> => {
     try {
-      const response = await fetch("http://localhost:3001/news/fetch"); // 너가 만든 API 경로
+      const response = await fetch(
+        "https://bluenode-452607.de.r.appspot.com/news/fetch"
+      );
       if (!response.ok) throw new Error("Failed to fetch news");
       const data = await response.json();
 
-      // 여기서 백엔드에서 보내주는 데이터가 NewsItem과 맞는지 확인하고 가공
       return data.map((item: any) => ({
         id: item.id.toString(),
         title: item.title,
